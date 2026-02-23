@@ -60,10 +60,13 @@ function updateClock() {
 
   if (h >= 0 && h < 8) {
     $(".left").classList.add("dimmer-late-night");
+    $(".weather").classList.add("dimmer-late-night-img");
   } else if (h >= 21) {
     $(".left").classList.add("dimmer-night");
+    $(".weather").classList.add("dimmer-night-img");
   } else {
     $(".left").classList.add("dimmer-day");
+    $(".weather").classList.add("dimmer-day-img");
   }
 
   const day = now.getDate().toString().padStart(2, '0');

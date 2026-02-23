@@ -40,7 +40,6 @@ body {
 }
 
 .weather {
-  filter: invert(1);
   width:100%;
 }
 
@@ -65,6 +64,10 @@ body {
   margin-left:10px;
 }
 
+.dimmer-day {
+  color: #ccc !important;
+}
+
 .dimmer-night {
   color: #999 !important;
 }
@@ -73,6 +76,18 @@ body {
   color: #444 !important;
 }
 
-.dimmer-day {
-  color: #ccc !important;
+.dimmer-day-img {
+  filter: brightness(1.2) invert(1);
 }
+
+.dimmer-night-img {
+  filter: brightness(0.6) invert(1);
+}
+
+.dimmer-late-night-img {
+  filter: brightness(0.3) invert(1);
+}
+
+
+
+
