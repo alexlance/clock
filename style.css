@@ -1,0 +1,77 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 30px 30px 30px 30px;
+  background:#000;
+  color:#fff;
+  font-family:sans-serif;
+}
+
+.container {
+  display: flex;
+  height: 100%;
+}
+
+.left {
+  width:49%;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100%;
+}
+
+.right {
+  width:49%;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.weather {
+  filter: invert(1);
+  width:100%;
+}
+
+.time {
+  font-size:10rem;
+  display:block;
+}
+
+.merd {
+  font-size:4rem;
+}
+
+.date {
+  font-size:3rem;
+  display:block;
+  margin-left:10px;
+}
+
+.day {
+  font-size:5rem;
+  display:block;
+  margin-left:10px;
+}
+
+.dimmer-night {
+  color: #999 !important;
+}
+
+.dimmer-late-night {
+  color: #444 !important;
+}
+
+.dimmer-day {
+  color: #ccc !important;
+}
