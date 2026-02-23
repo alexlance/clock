@@ -46,19 +46,19 @@ body {
 }
 
 .merd {
-  font-size:4rem;
-}
-
-.date {
   font-size:3rem;
-  display:block;
-  margin-left:10px;
 }
 
 .day {
   font-size:5rem;
   display:block;
-  margin-left:10px;
+  margin-left:20px;
+}
+
+.date {
+  font-size:3rem;
+  display:block;
+  margin-left:40px;
 }
 
 .dimmer-day {
@@ -66,23 +66,23 @@ body {
 }
 
 .dimmer-night {
-  color: #999 !important;
+  color: #666 !important;
 }
 
 .dimmer-late-night {
-  color: #444 !important;
+  color: #333 !important;
 }
 
 .dimmer-day-img {
-  filter: brightness(1.2) invert(1);
+  filter: opacity(100%) invert(1);
 }
 
 .dimmer-night-img {
-  filter: brightness(0.6) invert(1);
+  filter: opacity(50%) invert(1);
 }
 
 .dimmer-late-night-img {
-  filter: brightness(0.3) invert(1);
+  filter: opacity(0%) invert(1);
 }
 
 

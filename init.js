@@ -31,14 +31,6 @@ function formatDay(date) {
   return dayName;
 }
 
-function goFullscreen() {
-  const el = document.documentElement;
-  if (el.requestFullscreen) el.requestFullscreen();
-  else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
-  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-  else if (el.msRequestFullscreen) el.msRequestFullscreen();
-}
-
 function nearestPastMinuteEndingIn5(minute) {
   // subtract remainder modulo 10, then add 5 if result > current minute
   let base = minute - (minute % 10) + 5;
@@ -90,8 +82,44 @@ function updateClock() {
   }
 }
 
+// Automatic page+css+js refresh every so often
+function bustAssets(stamp) {
+  // Stylesheets
+  const styles = document.querySelectorAll('link[rel="stylesheet"]');
+  styles.forEach(link => {
+    const url = new URL(link.href, location.origin);
+    url.searchParams.set('_', stamp);
+    link.href = url.toString();
+  });
+
+  // Scripts
+  const scripts = document.querySelectorAll('script[src]');
+  scripts.forEach(oldScript => {
+    const url = new URL(oldScript.src, location.origin);
+    url.searchParams.set('_', stamp);
+    const newScript = document.createElement('script');
+    newScript.src = url.toString();
+    newScript.async = false;
+    oldScript.parentNode.insertBefore(newScript, oldScript);
+    oldScript.remove();
+  });
+}
+
+function hardRefresh() {
+  const stamp = Date.now();
+  bustAssets(stamp);
+
+  // Small delay to let new assets start loading
+  setTimeout(() => {
+    const url = new URL(location.href);
+    url.searchParams.set('_', stamp);
+    location.replace(url.toString());
+  }, 500);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  document.addEventListener('click', goFullscreen); // tap to fullscreen
   updateClock();
   setInterval(updateClock, 10000);
+  const INTERVAL = 30 * 60 * 1000; // 30 minutes
+  setInterval(hardRefresh, INTERVAL);
 });
