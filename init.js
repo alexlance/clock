@@ -5,9 +5,9 @@ function $(selector, root = document) {
 function formatTime(date) {
   let hours = date.getHours();
   const minutes = date.getMinutes();
+  const merd = hours >= 12 ? "pm" : "am";
   hours = hours % 12;
   hours = hours ? hours : 12; // 0 -> 12
-  const merd = hours >= 12 ? "pm" : "am";
   const mm = minutes.toString().padStart(2, "0");
   return `${hours}:${mm}<span class="merd">${merd}</span>`;
 }
