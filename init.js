@@ -49,16 +49,32 @@ function updateClock() {
 
   const h = now.getHours();
   $(".left").classList.remove("dimmer-night","dimmer-late-night","dimmer-day");
+  $(".weather").classList.remove("dimmer-night-img","dimmer-late-night-img","dimmer-day-img");
 
   if (h >= 0 && h < 8) {
     $(".left").classList.add("dimmer-late-night");
     $(".weather").classList.add("dimmer-late-night-img");
+    try {
+      window.WebviewKioskBrightnessInterface.setBrightness(2);
+    } catch (error) {
+      // console.error("Brightness Control Error:", error);
+    }
   } else if (h >= 21) {
     $(".left").classList.add("dimmer-night");
     $(".weather").classList.add("dimmer-night-img");
+    try {
+      window.WebviewKioskBrightnessInterface.setBrightness(40);
+    } catch (error) {
+      // console.error("Brightness Control Error:", error);
+    }
   } else {
     $(".left").classList.add("dimmer-day");
     $(".weather").classList.add("dimmer-day-img");
+    try {
+      window.WebviewKioskBrightnessInterface.setBrightness(70);
+    } catch (error) {
+      // console.error("Brightness Control Error:", error);
+    }
   }
 
   const day = now.getDate().toString().padStart(2, '0');
@@ -117,9 +133,69 @@ function hardRefresh() {
   }, 500);
 }
 
+async function willItRainToday() {
+  // https://api.weather.bom.gov.au/v1/locations?search=melbourne
+  const loc = "r1r0ghr";  // east melb
+  const res = await fetch(
+    `https://api.weather.bom.gov.au/v1/locations/${loc}/forecasts/daily`
+  );
+
+  if (!res.ok) {
+    throw new Error("Network response failed");
+  }
+
+  const json = await res.json();
+  const today = json.data[0];
+
+  // console.log(today);
+  const rainChance = today.rain?.chance ?? 0;
+  const maxRain = today.rain?.amount?.max ?? 0;
+
+
+  // `https://api.weather.bom.gov.au/v1/locations/${loc}/observations`
+  const res2 = await fetch("https://api.weather.bom.gov.au/v1/locations/r1r0fs/observations");
+
+  // if (!res2.ok) throw new Error("Request failed");
+  const json2 = await res2.json();
+  const temp = json2.data?.temp;          // air temperature (°C)
+  const feelsLike = json2.data?.temp_feels_like; // apparent temperature (°C)
+
+  return {
+    "likely": rainChance > 50, 
+    "percent": rainChance,
+    "rainfall": maxRain,
+    desc: today.short_text, 
+    max: today.temp_max,
+    min: today.temp_min,
+    icon: today.icon_descriptor.replace("_", "-"),
+    temp: temp,
+    feels: feelsLike
+  }
+}
+
+async function geticon(icon) {
+  const res = await fetch(`/img/icon-${icon}.svg`);
+  if (!res.ok) throw new Error("Failed to fetch SVG");
+  const svgText = await res.text();
+  return svgText;
+}
+
+async function updateRain() {
+  const result = await willItRainToday();
+  const i = await geticon(result.icon);
+  $(".weatherdesc").innerHTML = result.desc;
+  $(".weatherrain").innerHTML = `Rain: ${result.rainfall}mm/${result.percent}%`;
+  $(".weathermax").innerHTML = `Max: ${result.max}&deg; Min: ${result.min}&deg;`;
+  $(".weathernow").innerHTML = `<span class="weathericon">${i}</span>${result.temp}&deg;` 
+  //<span class="tiny"><br>(feels like ${result.feels}&deg;)</span>`;
+  //$(".weathericon").style.fill = "#fff";
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   updateClock();
+  updateRain();
   setInterval(updateClock, 10000);
-  const INTERVAL = 30 * 60 * 1000; // 30 minutes
+  setInterval(updateRain, 20 * 60 * 1000); // 20 minutes
+  const INTERVAL = 60 * 60 * 1000; // 30 minutes
   setInterval(hardRefresh, INTERVAL);
 });

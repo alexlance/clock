@@ -10,7 +10,7 @@ html {
 
 body {
   height: 100%;
-  margin: 30px 10px 30px 10px;
+  margin: 10px 10px 30px 10px;
   background:#000;
   color:#fff;
   font-family:sans-serif;
@@ -22,14 +22,14 @@ body {
 }
 
 .left {
-  width:40%;
+  width:38%;
   display: inline-block;
   vertical-align:top;
   height: 100%;
 }
 
 .right {
-  width:59%;
+  width:61%;
   display: inline-block;
   text-align:right;
   height: 100%;
@@ -41,7 +41,7 @@ body {
 }
 
 .time {
-  font-size:8rem;
+  font-size:7rem;
   display:block;
 }
 
@@ -49,28 +49,66 @@ body {
   font-size:3rem;
 }
 
-.day {
-  font-size:5rem;
-  display:block;
-  margin-left:20px;
+.tiny {
+  font-size:1rem;
 }
 
-.date {
+.day {
   font-size:3rem;
   display:block;
   margin-left:20px;
 }
 
+.date {
+  font-size:2.5rem;
+  display:block;
+  margin-left:25px;
+}
+
+.weathernow {
+  font-size:3.5rem;
+  display:block;
+  margin-top:15px;
+  margin-left:25px;
+  line-height:0.7;
+}
+
+.weathericon {
+  width:60px;
+  display:inline-block;
+  top:10px;
+  position:relative;
+}
+
+.weatherdesc {
+  font-size:1.5rem;
+  display:block;
+  margin-top:15px;
+  margin-left:25px;
+}
+.weatherrain {
+  font-size:1.5rem;
+  display:block;
+  margin-left:25px;
+}
+.weathermax {
+  font-size:1.5rem;
+  display:block;
+  margin-left:25px;
+}
 .dimmer-day {
   color: #ccc !important;
+  fill: #ccc !important;
 }
 
 .dimmer-night {
   color: #666 !important;
+  fill: #666 !important;
 }
 
 .dimmer-late-night {
-  color: #333 !important;
+  color: #222 !important;
+  fill: #222 !important;
 }
 
 .dimmer-day-img {
