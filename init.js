@@ -39,7 +39,7 @@ function nearestPastMinuteEndingIn5(minute) {
   return base;
 }
 
-function updateClock() {
+async function updateClock() {
   const now = new Date();
   const minutes = now.getMinutes();
 
@@ -93,8 +93,11 @@ function updateClock() {
 
   // http://www.baywx.com.au/WWW/melbtemp22302261545.png
   if ($(".weather").src != url) {
-    console.log(`Fetching: ${url}`);
-    $(".weather").src = url;
+    const exists = await fileExists(url);
+    if (exists) {
+      console.log(`Fetching: ${url}`);
+      $(".weather").src = url;
+    }
   }
 }
 
@@ -189,6 +192,15 @@ async function updateRain() {
   $(".weathernow").innerHTML = `<span class="weathericon">${i}</span>${result.temp}&deg;` 
   //<span class="tiny"><br>(feels like ${result.feels}&deg;)</span>`;
   //$(".weathericon").style.fill = "#fff";
+}
+
+function fileExists(url) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = url;
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
