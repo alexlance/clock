@@ -169,7 +169,7 @@ async function getWeather() {
   const day3 = json.data[2];
   const day4 = json.data[3];
 
-  console.log(day2);
+  console.log(day1);
   const rainChance = day1.rain?.chance ?? 0;
   const maxRain = day1.rain?.amount?.max ?? 0;
 
@@ -178,35 +178,33 @@ async function getWeather() {
   const res2 = await fetch("https://api.weather.bom.gov.au/v1/locations/r1r0fs/observations");
   const json2 = await res2.json();
   const temp = json2.data?.temp;          // air temperature (°C)
-  const feelsLike = json2.data?.temp_feels_like; // apparent temperature (°C)
 
   return {
     "likely": rainChance > 50,
     "percent": rainChance,
     "rainfall": maxRain,
     desc: day1.short_text,
-    max: day1.temp_max,
-    min: day1.temp_min,
+    max: day1.temp_max ?? "0",
+    min: day1.temp_min ?? "0",
     icon: await getIcon(day1.icon_descriptor.replace("_", "-")),
     temp: temp,
-    feels: feelsLike,
 
     daylabel2: new Date(day2.date).toLocaleDateString("en-AU", { weekday: "short" }),
     desc2: day2.short_text,
-    max2: day2.temp_max,
-    min2: day2.temp_min,
+    max2: day2.temp_max ?? "0",
+    min2: day2.temp_min ?? "0",
     icon2: await getIcon(day2.icon_descriptor.replace("_", "-")),
 
     daylabel3: new Date(day3.date).toLocaleDateString("en-AU", { weekday: "short" }),
     desc3: day3.short_text,
-    max3: day3.temp_max,
-    min3: day3.temp_min,
+    max3: day3.temp_max ?? "0",
+    min3: day3.temp_min ?? "0",
     icon3: await getIcon(day3.icon_descriptor.replace("_", "-")),
 
     daylabel4: new Date(day4.date).toLocaleDateString("en-AU", { weekday: "short" }),
     desc4: day4.short_text,
-    max4: day4.temp_max,
-    min4: day4.temp_min,
+    max4: day4.temp_max ?? "0",
+    min4: day4.temp_min ?? "0",
     icon4: await getIcon(day4.icon_descriptor.replace("_", "-"))
 
   }
@@ -221,7 +219,7 @@ async function getIcon(icon) {
 
 async function updateRain() {
   const r = await getWeather();
-  $(".weathernow").innerHTML = `<span class="weathericon">${r.icon}</span>${r.max}&deg;-${r.min}&deg; <span class="tiny">Now: ${r.temp}&deg;</span>`
+  $(".weathernow").innerHTML = `<span class="tiny">Now: ${r.temp}&deg;</span><br><span class="weathericon">${r.icon}</span>${r.max}&deg;-${r.min}&deg;`
   $(".weatherdesc").innerHTML = `<b>${r.desc}</b>`;
   $(".weatherrain").innerHTML = `Rain: ${r.rainfall}mm/${r.percent}%`;
   $(".weathertomor").innerHTML = `
