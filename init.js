@@ -51,29 +51,45 @@ async function updateClock() {
   $(".left").classList.remove("dimmer-night","dimmer-late-night","dimmer-day");
   $(".weather").classList.remove("dimmer-night-img","dimmer-late-night-img","dimmer-day-img");
 
-  if (h >= 0 && h < 8) {
+  // midnight to 6am
+  if (h >= 0 && h < 6) {
     $(".left").classList.add("dimmer-late-night");
     $(".weather").classList.add("dimmer-late-night-img");
     try {
       window.WebviewKioskBrightnessInterface.setBrightness(2);
     } catch (error) {
-      // console.error("Brightness Control Error:", error);
     }
+  // after 9pm
   } else if (h >= 21) {
     $(".left").classList.add("dimmer-night");
     $(".weather").classList.add("dimmer-night-img");
     try {
-      window.WebviewKioskBrightnessInterface.setBrightness(40);
+      window.WebviewKioskBrightnessInterface.setBrightness(20);
     } catch (error) {
-      // console.error("Brightness Control Error:", error);
     }
-  } else {
+  // after midday
+  } else if (h >= 12) {
+    $(".left").classList.add("dimmer-night");
+    $(".weather").classList.add("dimmer-night-img");
+    try {
+      window.WebviewKioskBrightnessInterface.setBrightness(50);
+    } catch (error) {
+    }
+  // from 8am to midday
+  } else if (h >= 8) {
     $(".left").classList.add("dimmer-day");
     $(".weather").classList.add("dimmer-day-img");
     try {
-      window.WebviewKioskBrightnessInterface.setBrightness(70);
+      window.WebviewKioskBrightnessInterface.setBrightness(80);
     } catch (error) {
-      // console.error("Brightness Control Error:", error);
+    }
+  // from 6am to 8am
+  } else if (h >= 6) {
+    $(".left").classList.add("dimmer-day");
+    $(".weather").classList.add("dimmer-day-img");
+    try {
+      window.WebviewKioskBrightnessInterface.setBrightness(30);
+    } catch (error) {
     }
   }
 
