@@ -38,6 +38,8 @@ body {
 .weather {
   width:100%;
   float:right;
+  top: -40px;
+  position: relative;
 }
 
 .time {
