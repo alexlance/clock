@@ -152,7 +152,7 @@ function hardRefresh() {
   }, 500);
 }
 
-async function willItRainToday() {
+async function getWeather() {
   // https://api.weather.bom.gov.au/v1/locations?search=melbourne
   const loc = "r1r0ghr";  // east melb
   const res = await fetch(
@@ -164,35 +164,55 @@ async function willItRainToday() {
   }
 
   const json = await res.json();
-  const today = json.data[0];
+  const day1 = json.data[0];
+  const day2 = json.data[1];
+  const day3 = json.data[2];
+  const day4 = json.data[3];
 
-  // console.log(today);
-  const rainChance = today.rain?.chance ?? 0;
-  const maxRain = today.rain?.amount?.max ?? 0;
+  console.log(day2);
+  const rainChance = day1.rain?.chance ?? 0;
+  const maxRain = day1.rain?.amount?.max ?? 0;
 
 
   // `https://api.weather.bom.gov.au/v1/locations/${loc}/observations`
   const res2 = await fetch("https://api.weather.bom.gov.au/v1/locations/r1r0fs/observations");
-
-  // if (!res2.ok) throw new Error("Request failed");
   const json2 = await res2.json();
   const temp = json2.data?.temp;          // air temperature (°C)
   const feelsLike = json2.data?.temp_feels_like; // apparent temperature (°C)
 
   return {
-    "likely": rainChance > 50, 
+    "likely": rainChance > 50,
     "percent": rainChance,
     "rainfall": maxRain,
-    desc: today.short_text, 
-    max: today.temp_max,
-    min: today.temp_min,
-    icon: today.icon_descriptor.replace("_", "-"),
+    desc: day1.short_text,
+    max: day1.temp_max,
+    min: day1.temp_min,
+    icon: await getIcon(day1.icon_descriptor.replace("_", "-")),
     temp: temp,
-    feels: feelsLike
+    feels: feelsLike,
+
+    daylabel2: new Date(day2.date).toLocaleDateString("en-AU", { weekday: "short" }),
+    desc2: day2.short_text,
+    max2: day2.temp_max,
+    min2: day2.temp_min,
+    icon2: await getIcon(day2.icon_descriptor.replace("_", "-")),
+
+    daylabel3: new Date(day3.date).toLocaleDateString("en-AU", { weekday: "short" }),
+    desc3: day3.short_text,
+    max3: day3.temp_max,
+    min3: day3.temp_min,
+    icon3: await getIcon(day3.icon_descriptor.replace("_", "-")),
+
+    daylabel4: new Date(day4.date).toLocaleDateString("en-AU", { weekday: "short" }),
+    desc4: day4.short_text,
+    max4: day4.temp_max,
+    min4: day4.temp_min,
+    icon4: await getIcon(day4.icon_descriptor.replace("_", "-"))
+
   }
 }
 
-async function geticon(icon) {
+async function getIcon(icon) {
   const res = await fetch(`/img/icon-${icon}.svg`);
   if (!res.ok) throw new Error("Failed to fetch SVG");
   const svgText = await res.text();
@@ -200,14 +220,14 @@ async function geticon(icon) {
 }
 
 async function updateRain() {
-  const result = await willItRainToday();
-  const i = await geticon(result.icon);
-  $(".weatherdesc").innerHTML = result.desc;
-  $(".weatherrain").innerHTML = `Rain: ${result.rainfall}mm/${result.percent}%`;
-  $(".weathermax").innerHTML = `Max: ${result.max}&deg; Min: ${result.min}&deg;`;
-  $(".weathernow").innerHTML = `<span class="weathericon">${i}</span>${result.temp}&deg;` 
-  //<span class="tiny"><br>(feels like ${result.feels}&deg;)</span>`;
-  //$(".weathericon").style.fill = "#fff";
+  const r = await getWeather();
+  $(".weathernow").innerHTML = `<span class="weathericon">${r.icon}</span>${r.max}&deg;-${r.min}&deg; <span class="tiny">Now: ${r.temp}&deg;</span>`
+  $(".weatherdesc").innerHTML = `<b>${r.desc}</b>`;
+  $(".weatherrain").innerHTML = `Rain: ${r.rainfall}mm/${r.percent}%`;
+  $(".weathertomor").innerHTML = `
+    <span class="tinyday">${r.daylabel2}</span> <span class="weathericon">${r.icon2}</span> ${r.max2}&deg;-${r.min2}&deg; ${r.desc2}<br>
+    <span class="tinyday">${r.daylabel3}</span> <span class="weathericon">${r.icon3}</span> ${r.max3}&deg;-${r.min3}&deg; ${r.desc3}<br>
+    <span class="tinyday">${r.daylabel4}</span> <span class="weathericon">${r.icon4}</span> ${r.max4}&deg;-${r.min4}&deg; ${r.desc4}<br>`;
 }
 
 function fileExists(url) {

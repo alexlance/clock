@@ -52,6 +52,10 @@ body {
 .tiny {
   font-size:1rem;
 }
+.tinyday {
+  width:35px;
+  display:inline-block;
+}
 
 .day {
   font-size:3rem;
@@ -96,6 +100,20 @@ body {
   display:block;
   margin-left:25px;
 }
+.weathertomor {
+  font-size:1rem;
+  display:block;
+  margin-top:15px;
+  margin-left:25px;
+  line-height:0;
+}
+.weathertomor .weathericon {
+  width:30px;
+  display:inline-block;
+  top:10px;
+  position:relative;
+}
+
 .dimmer-day {
   color: #ccc !important;
   fill: #ccc !important;
