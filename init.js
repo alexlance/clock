@@ -50,43 +50,49 @@ async function updateClock() {
   const h = now.getHours();
   $(".left").classList.remove("dimmer-night","dimmer-late-night","dimmer-day");
   $(".weather").classList.remove("dimmer-night-img","dimmer-late-night-img","dimmer-day-img");
+  $(".timer").classList.remove("dimmer-night-img","dimmer-late-night-img","dimmer-day-img");
 
   // midnight to 6am
   if (h >= 0 && h < 6) {
     $(".left").classList.add("dimmer-late-night");
     $(".weather").classList.add("dimmer-late-night-img");
+    $(".timer").classList.add("dimmer-night-img");
     try {
-      window.WebviewKioskBrightnessInterface.setBrightness(2);
+      window.WebviewKioskBrightnessInterface.setBrightness(0);
     } catch (error) {
     }
   // after 9pm
   } else if (h >= 21) {
     $(".left").classList.add("dimmer-night");
     $(".weather").classList.add("dimmer-night-img");
+    $(".timer").classList.add("dimmer-night-img");
     try {
-      window.WebviewKioskBrightnessInterface.setBrightness(20);
+      window.WebviewKioskBrightnessInterface.setBrightness(15);
     } catch (error) {
     }
   // after midday
   } else if (h >= 12) {
     $(".left").classList.add("dimmer-night");
     $(".weather").classList.add("dimmer-night-img");
+    $(".timer").classList.add("dimmer-night-img");
     try {
-      window.WebviewKioskBrightnessInterface.setBrightness(50);
+      window.WebviewKioskBrightnessInterface.setBrightness(30);
     } catch (error) {
     }
   // from 8am to midday
   } else if (h >= 8) {
     $(".left").classList.add("dimmer-day");
     $(".weather").classList.add("dimmer-day-img");
+    $(".timer").classList.add("dimmer-day-img");
     try {
-      window.WebviewKioskBrightnessInterface.setBrightness(80);
+      window.WebviewKioskBrightnessInterface.setBrightness(50);
     } catch (error) {
     }
   // from 6am to 8am
   } else if (h >= 6) {
     $(".left").classList.add("dimmer-day");
     $(".weather").classList.add("dimmer-day-img");
+    $(".timer").classList.add("dimmer-day-img");
     try {
       window.WebviewKioskBrightnessInterface.setBrightness(30);
     } catch (error) {
@@ -212,16 +218,16 @@ async function getWeather() {
 
 async function getIcon(icon) {
   const res = await fetch(`/img/icon-${icon}.svg`);
-  if (!res.ok) throw new Error("Failed to fetch SVG");
+  if (!res.ok) throw new Error(`Failed to fetch SVG: ${icon}`);
   const svgText = await res.text();
   return svgText;
 }
 
 async function updateRain() {
   const r = await getWeather();
-  $(".weathernow").innerHTML = `<span class="tiny">Now: ${r.temp}&deg;</span><br><span class="weathericon">${r.icon}</span>${r.max}&deg;-${r.min}&deg;`
+  $(".weathernow").innerHTML = `<span class="weathericon">${r.icon}</span>${r.max}&deg;-${r.min}&deg;`
   $(".weatherdesc").innerHTML = `<b>${r.desc}</b>`;
-  $(".weatherrain").innerHTML = `Rain: ${r.rainfall}mm/${r.percent}%`;
+  $(".weatherrain").innerHTML = `Rain: ${r.rainfall}mm/${r.percent}%<br><span class="tiny">Now: ${r.temp}&deg;</span>`;
   $(".weathertomor").innerHTML = `
     <span class="tinyday">${r.daylabel2}</span> <span class="weathericon">${r.icon2}</span> ${r.max2}&deg;-${r.min2}&deg; ${r.desc2}<br>
     <span class="tinyday">${r.daylabel3}</span> <span class="weathericon">${r.icon3}</span> ${r.max3}&deg;-${r.min3}&deg; ${r.desc3}<br>
@@ -237,6 +243,29 @@ function fileExists(url) {
   });
 }
 
+function updateTimer() {
+  const now = new Date();
+  const currentHour = now.getHours();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+
+  const segments = document.querySelectorAll(".timer-segment");
+
+  segments.forEach((segment, index) => {
+    const fill = segment.firstChild;
+
+    if (index < currentHour) {
+      fill.style.width = "100%";
+    } else if (index === currentHour) {
+      const percent =
+        ((minutes * 60 + seconds) / 3600) * 100;
+      fill.style.width = percent + "%";
+    } else {
+      fill.style.width = "0%";
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   updateClock();
   updateRain();
@@ -244,4 +273,16 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateRain, 20 * 60 * 1000); // 20 minutes
   const INTERVAL = 60 * 60 * 1000; // 30 minutes
   setInterval(hardRefresh, INTERVAL);
+
+  const container = document.querySelector(".timer");
+  for (let i = 0; i < 24; i++) {
+    const segment = document.createElement("div");
+    segment.className = "timer-segment";
+    const fill = document.createElement("div");
+    fill.className = "timer-fill";
+    segment.appendChild(fill);
+    container.appendChild(segment);
+  }
+  updateTimer();
+  setInterval(updateTimer, 10 * 60000);
 });
