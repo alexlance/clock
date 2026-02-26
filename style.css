@@ -40,6 +40,7 @@ body {
   top: -38px;
   right: 0px;
   position: absolute;
+  filter: opacity(100%) invert(1);
 }
 
 .time {
@@ -84,6 +85,7 @@ body {
   display:inline-block;
   top:26px;
   position:relative;
+  fill: #fff;
 }
 
 .weatherdesc {
@@ -116,31 +118,8 @@ body {
   position:relative;
 }
 
-.dimmer-day {
-  color: #ccc !important;
-  fill: #ccc !important;
-}
-
-.dimmer-night {
-  color: #666 !important;
-  fill: #666 !important;
-}
-
-.dimmer-late-night {
-  color: #222 !important;
-  fill: #222 !important;
-}
-
-.dimmer-day-img {
-  filter: opacity(100%) invert(1);
-}
-
-.dimmer-night-img {
-  filter: opacity(50%) invert(1);
-}
-
 .dimmer-late-night-img {
-  filter: opacity(0%) invert(1);
+  filter: opacity(0%);
 }
 
 .timer {
@@ -152,6 +131,7 @@ body {
   display: flex;
   gap: 14px;
   z-index: 1000;
+  filter: opacity(0%) invert(1);
 }
 
 .timer-segment {

@@ -9,7 +9,8 @@ function formatTime(date) {
   hours = hours % 12;
   hours = hours ? hours : 12; // 0 -> 12
   const mm = minutes.toString().padStart(2, "0");
-  return `${hours}:${mm}<span class="merd">${merd}</span>`;
+  //return `${hours}:${mm}<span class="merd">${merd}</span>`;
+  return `${hours}:${mm}`;
 }
 
 function formatDate(date) {
@@ -48,55 +49,36 @@ async function updateClock() {
   $(".date").innerHTML = formatDate(now);
 
   const h = now.getHours();
-  $(".left").classList.remove("dimmer-night","dimmer-late-night","dimmer-day");
-  $(".weather").classList.remove("dimmer-night-img","dimmer-late-night-img","dimmer-day-img");
-  $(".timer").classList.remove("dimmer-night-img","dimmer-late-night-img","dimmer-day-img");
+  $(".weather").classList.remove("dimmer-late-night-img");
+
+  let brightness;
 
   // midnight to 6am
   if (h >= 0 && h < 6) {
-    $(".left").classList.add("dimmer-late-night");
     $(".weather").classList.add("dimmer-late-night-img");
-    $(".timer").classList.add("dimmer-night-img");
-    try {
-      window.WebviewKioskBrightnessInterface.setBrightness(0);
-    } catch (error) {
-    }
+    brightness = 0;
+
   // after 9pm
   } else if (h >= 21) {
-    $(".left").classList.add("dimmer-night");
-    $(".weather").classList.add("dimmer-night-img");
-    $(".timer").classList.add("dimmer-night-img");
-    try {
-      window.WebviewKioskBrightnessInterface.setBrightness(15);
-    } catch (error) {
-    }
+    brightness = 15;
+
   // after midday
   } else if (h >= 12) {
-    $(".left").classList.add("dimmer-night");
-    $(".weather").classList.add("dimmer-night-img");
-    $(".timer").classList.add("dimmer-night-img");
-    try {
-      window.WebviewKioskBrightnessInterface.setBrightness(30);
-    } catch (error) {
-    }
+    brightness = 30;
+
   // from 8am to midday
   } else if (h >= 8) {
-    $(".left").classList.add("dimmer-day");
-    $(".weather").classList.add("dimmer-day-img");
-    $(".timer").classList.add("dimmer-day-img");
-    try {
-      window.WebviewKioskBrightnessInterface.setBrightness(50);
-    } catch (error) {
-    }
+    brightness = 50;
+
   // from 6am to 8am
   } else if (h >= 6) {
-    $(".left").classList.add("dimmer-day");
-    $(".weather").classList.add("dimmer-day-img");
-    $(".timer").classList.add("dimmer-day-img");
-    try {
-      window.WebviewKioskBrightnessInterface.setBrightness(30);
-    } catch (error) {
-    }
+    brightness = 10;
+  }
+
+  try {
+    window.WebviewKioskBrightnessInterface.setBrightness(brightness);
+  } catch (error) {
+    console.log("Browser doesn't support setting screen brightness");
   }
 
   const day = now.getDate().toString().padStart(2, '0');
