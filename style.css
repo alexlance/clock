@@ -122,6 +122,12 @@ body {
   filter: opacity(0%);
 }
 
+.current {
+  margin-top:25px;
+  display:block;
+  font-size:2rem;
+}
+
 .timer {
   position: fixed;
   bottom: 0;

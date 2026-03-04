@@ -75,11 +75,11 @@ async function updateClock() {
     brightness = 10;
   }
 
-  try {
-    window.WebviewKioskBrightnessInterface.setBrightness(brightness);
-  } catch (error) {
-    console.log("Browser doesn't support setting screen brightness");
-  }
+  //try {
+  //  window.WebviewKioskBrightnessInterface.setBrightness(brightness);
+  //} catch (error) {
+  //  console.log("Browser doesn't support setting screen brightness");
+  //}
 
   const day = now.getDate().toString().padStart(2, '0');
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -209,7 +209,7 @@ async function updateRain() {
   const r = await getWeather();
   $(".weathernow").innerHTML = `<span class="weathericon">${r.icon}</span>${r.max}&deg;-${r.min}&deg;`
   $(".weatherdesc").innerHTML = `<b>${r.desc}</b>`;
-  $(".weatherrain").innerHTML = `Rain: ${r.rainfall}mm/${r.percent}%<br><span class="tiny">Now: ${r.temp}&deg;</span>`;
+  $(".weatherrain").innerHTML = `Rain: ${r.rainfall}mm/${r.percent}%<br><span class="current">Now: ${r.temp}&deg;</span>`;
   $(".weathertomor").innerHTML = `
     <span class="tinyday">${r.daylabel2}</span> <span class="weathericon">${r.icon2}</span> ${r.max2}&deg;-${r.min2}&deg; ${r.desc2}<br>
     <span class="tinyday">${r.daylabel3}</span> <span class="weathericon">${r.icon3}</span> ${r.max3}&deg;-${r.min3}&deg; ${r.desc3}<br>
