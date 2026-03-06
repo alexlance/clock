@@ -2,6 +2,7 @@
 <html>
   <head>
     <link rel="StyleSheet" href="/style.css" type="text/css" media="screen" />
+    <script src="/hls.js"></script>
     <script src="/init.js"></script>
   </head>
   <body>
@@ -14,11 +15,18 @@
         <span class="weatherdesc"></span>
         <span class="weatherrain"></span>
         <span class="weathertomor"></span>
+
+        <div class="radio">
+          <button id="playPause">Radio off</button>
+          <audio id="radio"></audio>
+        </div>
+
       </div>
       <div class="right">
         <img class="weather">
       </div>
-      <div class="timer"></div>
+
+
     </div>
   </body>
 </html>

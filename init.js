@@ -225,29 +225,6 @@ function fileExists(url) {
   });
 }
 
-function updateTimer() {
-  const now = new Date();
-  const currentHour = now.getHours();
-  const minutes = now.getMinutes();
-  const seconds = now.getSeconds();
-
-  const segments = document.querySelectorAll(".timer-segment");
-
-  segments.forEach((segment, index) => {
-    const fill = segment.firstChild;
-
-    if (index < currentHour) {
-      fill.style.width = "100%";
-    } else if (index === currentHour) {
-      const percent =
-        ((minutes * 60 + seconds) / 3600) * 100;
-      fill.style.width = percent + "%";
-    } else {
-      fill.style.width = "0%";
-    }
-  });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   updateClock();
   updateRain();
@@ -256,15 +233,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const INTERVAL = 60 * 60 * 1000; // 30 minutes
   setInterval(hardRefresh, INTERVAL);
 
-  const container = document.querySelector(".timer");
-  for (let i = 0; i < 24; i++) {
-    const segment = document.createElement("div");
-    segment.className = "timer-segment";
-    const fill = document.createElement("div");
-    fill.className = "timer-fill";
-    segment.appendChild(fill);
-    container.appendChild(segment);
+
+  const url = "https://mediaserviceslive.akamaized.net/hls/live/2038315/doublejnsw/index.m3u8";
+  const audio = document.getElementById("radio");
+  const btn = document.getElementById("playPause");
+
+  if (Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource(url);
+    hls.attachMedia(audio);
+  } else if (audio.canPlayType("application/vnd.apple.mpegurl")) {
+    audio.src = url;
   }
-  updateTimer();
-  setInterval(updateTimer, 10 * 60000);
+
+  btn.onclick = () => {
+    if (audio.paused) {
+      audio.play();
+      btn.textContent = "Radio on";
+    } else {
+      audio.pause();
+      btn.textContent = "Radio off";
+    }
+  };
+
+
 });
