@@ -225,7 +225,7 @@ function fileExists(url) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   updateClock();
   updateRain();
   setInterval(updateClock, 10000);
@@ -249,12 +249,19 @@ document.addEventListener('DOMContentLoaded', () => {
   btn.onclick = () => {
     if (audio.paused) {
       audio.play();
-      btn.textContent = "Radio on";
+      getIcon('music').then(svg => {
+        btn.innerHTML = svg + "Radio on";
+      });
     } else {
       audio.pause();
-      btn.textContent = "Radio off";
+      getIcon('music').then(svg => {
+        btn.innerHTML = svg + "Radio off";
+      });
     }
   };
 
+  getIcon('music').then(svg => {
+    btn.innerHTML = svg + "Radio off";
+  });
 
 });

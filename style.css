@@ -133,12 +133,17 @@ body {
 }
 
 #playPause {
-  padding:20px;
-  font-size:2rem;
+  padding:30px;
+  font-size:1.5rem;
   background:#444;
-  color:#000;
+  color:#bbb;
   border:1px solid #222;
   border-radius:20px;
-  text-shadow:1px 1px 1px #666;
 }
 
+#playPause svg {
+  width: 24px;
+  height: 24px;
+  top:3px;
+  position:relative;
+}
