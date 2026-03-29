@@ -51,35 +51,10 @@ async function updateClock() {
   const h = now.getHours();
   $(".weather").classList.remove("dimmer-late-night-img");
 
-  let brightness;
-
-  // midnight to 6am
+  // midnight to 6am hide the weather chart
   if (h >= 0 && h < 6) {
     $(".weather").classList.add("dimmer-late-night-img");
-    brightness = 0;
-
-  // after 9pm
-  } else if (h >= 21) {
-    brightness = 15;
-
-  // after midday
-  } else if (h >= 12) {
-    brightness = 30;
-
-  // from 8am to midday
-  } else if (h >= 8) {
-    brightness = 50;
-
-  // from 6am to 8am
-  } else if (h >= 6) {
-    brightness = 10;
   }
-
-  //try {
-  //  window.WebviewKioskBrightnessInterface.setBrightness(brightness);
-  //} catch (error) {
-  //  console.log("Browser doesn't support setting screen brightness");
-  //}
 
   const day = now.getDate().toString().padStart(2, '0');
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -106,39 +81,39 @@ async function updateClock() {
 }
 
 // Automatic page+css+js refresh every so often
-function bustAssets(stamp) {
-  // Stylesheets
-  const styles = document.querySelectorAll('link[rel="stylesheet"]');
-  styles.forEach(link => {
-    const url = new URL(link.href, location.origin);
-    url.searchParams.set('_', stamp);
-    link.href = url.toString();
-  });
+// function bustAssets(stamp) {
+//   // Stylesheets
+//   const styles = document.querySelectorAll('link[rel="stylesheet"]');
+//   styles.forEach(link => {
+//     const url = new URL(link.href, location.origin);
+//     url.searchParams.set('_', stamp);
+//     link.href = url.toString();
+//   });
+//
+//   // Scripts
+//   const scripts = document.querySelectorAll('script[src]');
+//   scripts.forEach(oldScript => {
+//     const url = new URL(oldScript.src, location.origin);
+//     url.searchParams.set('_', stamp);
+//     const newScript = document.createElement('script');
+//     newScript.src = url.toString();
+//     newScript.async = false;
+//     oldScript.parentNode.insertBefore(newScript, oldScript);
+//     oldScript.remove();
+//   });
+// }
 
-  // Scripts
-  const scripts = document.querySelectorAll('script[src]');
-  scripts.forEach(oldScript => {
-    const url = new URL(oldScript.src, location.origin);
-    url.searchParams.set('_', stamp);
-    const newScript = document.createElement('script');
-    newScript.src = url.toString();
-    newScript.async = false;
-    oldScript.parentNode.insertBefore(newScript, oldScript);
-    oldScript.remove();
-  });
-}
-
-function hardRefresh() {
-  const stamp = Date.now();
-  bustAssets(stamp);
-
-  // Small delay to let new assets start loading
-  setTimeout(() => {
-    const url = new URL(location.href);
-    url.searchParams.set('_', stamp);
-    location.replace(url.toString());
-  }, 500);
-}
+// function hardRefresh() {
+//   const stamp = Date.now();
+//   bustAssets(stamp);
+//
+//   // Small delay to let new assets start loading
+//   setTimeout(() => {
+//     const url = new URL(location.href);
+//     url.searchParams.set('_', stamp);
+//     location.replace(url.toString());
+//   }, 500);
+// }
 
 async function getWeather() {
   // https://api.weather.bom.gov.au/v1/locations?search=melbourne
@@ -171,26 +146,26 @@ async function getWeather() {
     "likely": rainChance > 50,
     "percent": rainChance,
     "rainfall": maxRain,
-    desc: day1.short_text,
+    desc: day1.short_text.replace(/\.$/, ''),
     max: day1.temp_max ?? "0",
     min: day1.temp_min ?? "0",
     icon: await getIcon(day1.icon_descriptor.replace("_", "-")),
     temp: temp,
 
     daylabel2: new Date(day2.date).toLocaleDateString("en-AU", { weekday: "short" }),
-    desc2: day2.short_text,
+    desc2: day2.short_text.replace(/\.$/, ''),
     max2: day2.temp_max ?? "0",
     min2: day2.temp_min ?? "0",
     icon2: await getIcon(day2.icon_descriptor.replace("_", "-")),
 
     daylabel3: new Date(day3.date).toLocaleDateString("en-AU", { weekday: "short" }),
-    desc3: day3.short_text,
+    desc3: day3.short_text.replace(/\.$/, ''),
     max3: day3.temp_max ?? "0",
     min3: day3.temp_min ?? "0",
     icon3: await getIcon(day3.icon_descriptor.replace("_", "-")),
 
     daylabel4: new Date(day4.date).toLocaleDateString("en-AU", { weekday: "short" }),
-    desc4: day4.short_text,
+    desc4: day4.short_text.replace(/\.$/, ''),
     max4: day4.temp_max ?? "0",
     min4: day4.temp_min ?? "0",
     icon4: await getIcon(day4.icon_descriptor.replace("_", "-"))
@@ -207,13 +182,17 @@ async function getIcon(icon) {
 
 async function updateRain() {
   const r = await getWeather();
-  $(".weathernow").innerHTML = `<span class="weathericon">${r.icon}</span>${r.max}&deg;-${r.min}&deg;`
+
+  $(".weathericon").innerHTML = r.icon;
+  $(".weathernow").innerHTML = `${r.max}&deg;-${r.min}&deg;`
   $(".weatherdesc").innerHTML = `<b>${r.desc}</b>`;
-  $(".weatherrain").innerHTML = `Rain: ${r.rainfall}mm/${r.percent}%<br><span class="current">Now: ${r.temp}&deg;</span>`;
+  $(".weatherrain").innerHTML = `Rain: ${r.rainfall}mm/${r.percent}%<br>`;
   $(".weathertomor").innerHTML = `
     <span class="tinyday">${r.daylabel2}</span> <span class="weathericon">${r.icon2}</span> ${r.max2}&deg;-${r.min2}&deg; ${r.desc2}<br>
     <span class="tinyday">${r.daylabel3}</span> <span class="weathericon">${r.icon3}</span> ${r.max3}&deg;-${r.min3}&deg; ${r.desc3}<br>
     <span class="tinyday">${r.daylabel4}</span> <span class="weathericon">${r.icon4}</span> ${r.max4}&deg;-${r.min4}&deg; ${r.desc4}<br>`;
+
+  $(".current").innerHTML = `${r.temp}&deg;`;
 }
 
 function fileExists(url) {
@@ -228,10 +207,10 @@ function fileExists(url) {
 document.addEventListener('DOMContentLoaded', async () => {
   updateClock();
   updateRain();
-  setInterval(updateClock, 10000);
+  setInterval(updateClock, 30000); // 30 seconds
   setInterval(updateRain, 20 * 60 * 1000); // 20 minutes
-  const INTERVAL = 60 * 60 * 1000; // 30 minutes
-  setInterval(hardRefresh, INTERVAL);
+  // const INTERVAL = 60 * 60 * 1000; // 30 minutes
+  // setInterval(hardRefresh, INTERVAL);
 
 
   const url = "https://mediaserviceslive.akamaized.net/hls/live/2038315/doublejnsw/index.m3u8";
