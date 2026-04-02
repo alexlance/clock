@@ -174,8 +174,11 @@ async function getWeather() {
 }
 
 async function getIcon(icon) {
-  const res = await fetch(`/img/icon-${icon}.svg`);
-  if (!res.ok) throw new Error(`Failed to fetch SVG: ${icon}`);
+  let res = await fetch(`/img/icon-${icon}.svg`);
+  if (!res.ok) {
+    console.log(`Failed to fetch SVG: ${icon}`);
+    res = await fetch(`/img/icon-tropical-cyclone.svg`); // catch my attention
+  }
   const svgText = await res.text();
   return svgText;
 }
@@ -184,7 +187,11 @@ async function updateRain() {
   const r = await getWeather();
 
   $(".weathericon").innerHTML = r.icon;
-  $(".weathernow").innerHTML = `${r.max}&deg;-${r.min}&deg;`
+  if (r.min > 0) {
+    $(".weathernow").innerHTML = `${r.max}&deg;-${r.min}&deg;`
+  } else {
+    $(".weathernow").innerHTML = `max ${r.max}&deg;`
+  }
   $(".weatherdesc").innerHTML = `<b>${r.desc}</b>`;
   $(".weatherrain").innerHTML = `Rain: ${r.rainfall}mm/${r.percent}%<br>`;
   $(".weathertomor").innerHTML = `

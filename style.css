@@ -80,11 +80,12 @@ body {
 }
 
 .weathericon {
-  width:100px;
+  width:180px;
   display:inline-block;
   top:26px;
   position:relative;
   fill: #fff;
+  margin-left:50px;
 }
 
 .weatherdesc {
